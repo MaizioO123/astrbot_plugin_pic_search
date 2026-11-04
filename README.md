@@ -1,4 +1,6 @@
-# astrbot_plugin_image_search
+# astrbot_plugin_pic_search
+
+> 按关键词**正向搜图**（文字 → 图片）。需要**以图搜图**（图 → 出处）请看 kano0222 或 drdon1234 的同名插件。
 
 给 AstrBot 的 LLM 一个 `search_image` 工具：**按关键词联网搜图，并把图片直接发到会话里**。
 
@@ -18,13 +20,13 @@
 
 ### 方式一：插件市场
 
-在 AstrBot WebUI 的插件市场搜索 `astrbot_plugin_image_search`。
+在 AstrBot WebUI 的插件市场搜索 `astrbot_plugin_pic_search`。
 
 ### 方式二：手动安装
 
 ```bash
 cd <AstrBot 实例目录>/data/plugins
-git clone https://github.com/MaizioO/astrbot_plugin_image_search
+git clone https://github.com/MaizioO/astrbot_plugin_pic_search
 ```
 
 然后重启 AstrBot。
@@ -48,7 +50,7 @@ WebUI → 插件 → 联网搜图 → 设置。
 
 | 配置项 | 默认值 | 说明 |
 | --- | --- | --- |
-| 图源 | `360` | `360` 内置免 Key；`custom_json` 自定义 JSON 接口 |
+| 图源 | `bing` | `bing`（画质高，默认）/ `360`（更快）/ `custom_json`（自定义接口） |
 | 默认发送张数 | 2 | 用户没指定时发几张 |
 | 单次最多张数 | 5 | 硬上限 10，防止刷屏 |
 | 安全过滤 | **开启** | 按标题匹配敏感词后跳过 |
