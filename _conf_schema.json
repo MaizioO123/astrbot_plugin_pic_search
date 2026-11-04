@@ -30,8 +30,8 @@
   "safe_filter": {
     "description": "安全过滤",
     "type": "bool",
-    "default": false,
-    "hint": "开启后会跳过标题命中敏感词的结果。默认关闭"
+    "default": true,
+    "hint": "开启后会跳过标题命中敏感词的结果。默认开启，如不需要可关闭"
   },
   "safe_words": {
     "description": "自定义敏感词",
