@@ -253,7 +253,7 @@ class ImageSearchPlugin(Star):
             "source": source,
             "default_count": default_count,
             "max_count": max_count,
-            "safe_filter": bool(raw.get("safe_filter", False)),
+            "safe_filter": bool(raw.get("safe_filter", True)),
             "safe_words": DEFAULT_SAFE_WORDS + custom_words,
             "prefer_original": bool(raw.get("prefer_original", False)),
             "request_timeout": max(3, min(_int(raw.get("request_timeout", 12), 12), 60)),
