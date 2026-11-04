@@ -1,0 +1,88 @@
+{
+  "source": {
+    "description": "图源",
+    "type": "string",
+    "default": "360",
+    "options": ["360", "custom_json"],
+    "labels": ["360 图片（内置，无需 Key）", "自定义 JSON 接口"],
+    "hint": "默认用内置的 360 图片搜索，不需要任何 Key。选择「自定义 JSON 接口」后需要填写下面的接口地址与字段映射"
+  },
+  "default_count": {
+    "description": "默认发送张数",
+    "type": "int",
+    "default": 2,
+    "hint": "用户没有特别要求时发送几张图片，范围 1-5"
+  },
+  "max_count": {
+    "description": "单次最多张数",
+    "type": "int",
+    "default": 5,
+    "hint": "即使模型要求更多，也不会超过这个数量，防止刷屏"
+  },
+  "safe_filter": {
+    "description": "安全过滤",
+    "type": "bool",
+    "default": false,
+    "hint": "开启后会跳过标题命中敏感词的结果。默认关闭"
+  },
+  "safe_words": {
+    "description": "自定义敏感词",
+    "type": "string",
+    "default": "",
+    "hint": "逗号分隔，追加到内置词表之后。留空则只用内置词表"
+  },
+  "prefer_original": {
+    "description": "优先原图",
+    "type": "bool",
+    "default": false,
+    "hint": "关闭时优先取缩略图字段（更快更稳）；开启后优先取原图字段，可能较大"
+  },
+  "request_timeout": {
+    "description": "请求超时（秒）",
+    "type": "int",
+    "default": 12,
+    "hint": "搜索与下载的超时时间，网络较差时可以调大"
+  },
+  "custom_url": {
+    "description": "自定义接口地址",
+    "type": "string",
+    "default": "",
+    "hint": "支持占位符 {query}、{count}、{page}，例如 https://api.example.com/search?q={query}&n={count}。选了 360 图源时此项无效"
+  },
+  "custom_referer": {
+    "description": "自定义 Referer",
+    "type": "string",
+    "default": "",
+    "hint": "部分图源需要 Referer 才允许访问，留空表示不发送"
+  },
+  "custom_results_path": {
+    "description": "结果数组路径",
+    "type": "string",
+    "default": "",
+    "hint": "JSON 里结果数组所在的点号路径，例如 data、data.items、result.list。留空表示根节点就是数组"
+  },
+  "custom_image_fields": {
+    "description": "图片地址字段",
+    "type": "string",
+    "default": "thumb,thumb_bak,img",
+    "hint": "按优先级排列的字段名，逗号分隔，支持点号路径。例如 thumb,img 或 data.url"
+  },
+  "custom_title_field": {
+    "description": "标题字段",
+    "type": "string",
+    "default": "title",
+    "hint": "用于安全过滤与相关性排序的标题字段，留空则不使用"
+  },
+  "custom_link_field": {
+    "description": "来源页字段",
+    "type": "string",
+    "default": "link",
+    "hint": "可选，图片对应的来源页面地址，留空则不使用"
+  },
+  "custom_headers": {
+    "description": "自定义请求头",
+    "type": "string",
+    "default": "",
+    "hint": "JSON 格式，例如 {\"X-Api-Key\":\"xxx\"}。用于需要 Key 的图源"
+  }
+}
