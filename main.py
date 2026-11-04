@@ -181,10 +181,10 @@ def _parse_headers(raw: str) -> dict:
 
 
 @register(
-    "astrbot_plugin_image_search",
+    "astrbot_plugin_pic_search",
     "MaizioO",
     "按关键词联网搜索图片并发送到会话",
-    "1.3.0",
+    "1.5.0",
 )
 class ImageSearchPlugin(Star):
     def __init__(self, context: Context, config: AstrBotConfig | None = None):
