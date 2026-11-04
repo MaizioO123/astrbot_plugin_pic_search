@@ -239,9 +239,9 @@ class ImageSearchPlugin(Star):
             if w.strip()
         ]
 
-        source = str(raw.get("source") or "360").strip().lower()
+        source = str(raw.get("source") or "bing").strip().lower()
         if source not in ("360", "bing", "custom_json"):
-            source = "360"
+            source = "bing"
 
         image_fields = [
             f.strip()
