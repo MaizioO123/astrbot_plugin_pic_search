@@ -1,20 +1,19 @@
-name: astrbot_plugin_image_search
+name: astrbot_plugin_pic_search
 display_name: 联网搜图
 short_desc: 让 AI 按关键词联网搜图并直接发送到会话，无需 API Key
 desc: |
-  给 LLM 一个 `search_image` 工具：按关键词联网搜索图片，并把图片直接发送到会话。
+  给 LLM 一个 `search_image` 工具：按关键词**正向搜图**（文字 → 图片），把图片直接发送到会话。
 
-  - **零配置可用**：默认用 360 图片公开接口，不需要任何 API Key，国内可直连
-  - **图源可自定义**：支持任意返回 JSON 的图源（Bing / Pixabay / 自建图床），填接口地址与字段映射即可
-  - **真的会发图**：图片由插件下载并校验格式后以本地文件发送，不依赖平台拉 URL
-  - **三种图源**：Bing（画质高，默认）/ 360（快）/ 自定义 JSON 接口
-  - **长查询自动降级**：图源对长查询召回差，插件会逐步缩短关键词重试
-  - **相关性排序**：标题含查询词的结果优先
-  - **安全过滤**：可选，默认关闭
-  - **张数上限**：防止刷屏
-version: 1.4.1
-author: MaizioO
-repo: https://github.com/MaizioO/astrbot_plugin_image_search
+  - **零配置可用**：默认使用 Bing 图片搜索，不需要任何 API Key
+  - **三种图源**：Bing（画质高，默认）/ 360（响应快）/ 自定义 JSON 接口（Bing API、Pixabay、自建图床等）
+  - **真的会发图**：图片由插件下载并校验格式后以本地文件发送，不依赖平台去拉 URL
+  - **长查询自动降级**：图源对长查询召回差时，自动缩短关键词重试
+  - **相关性排序**：标题含查询词的结果优先发送
+  - **安全过滤**：默认开启，按标题匹配敏感词后跳过
+  - **张数上限**：防止一次刷屏
+version: 1.5.0
+author: MaizioO123
+repo: https://github.com/MaizioO123/astrbot_plugin_pic_search
 astrbot_version: ">=4.17.0"
 tags:
   - image
