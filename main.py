@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import html as html_lib
 import json
 import os
 import re
@@ -43,6 +44,9 @@ USER_AGENT = (
 
 BUILTIN_360_ENDPOINT = "https://image.so.com/j"
 BUILTIN_360_REFERER = "https://image.so.com/"
+
+BING_ENDPOINT = "https://cn.bing.com/images/async"
+BING_REFERER = "https://cn.bing.com/"
 
 # 硬上限，即使配置被改成很大也不会超过这个数
 HARD_LIMIT = 10
@@ -133,6 +137,35 @@ def _query_variants(query: str) -> list[str]:
     return out
 
 
+def _parse_bing_items(html_text: str) -> list[dict]:
+    """从 Bing 图片的 async 片段里抽出图片条目。
+
+    Bing 返回的是 HTML 片段，图链和标题藏在转义过的 JSON 里，形如
+    murl&quot;:&quot;https://...&quot;。这里按字段分别抽取，再按下标配对。
+    """
+
+    def _grab(key: str) -> list[str]:
+        for pat in (key + r"&quot;:&quot;(.*?)&quot;", key + r'":"(.*?)"'):
+            found = re.findall(pat, html_text or "")
+            if found:
+                return found
+        return []
+
+    urls = _grab("murl")
+    titles = _grab("t")
+    pages = _grab("purl")
+
+    items: list[dict] = []
+    for idx, url in enumerate(urls):
+        url = html_lib.unescape(url).strip()
+        if not url.startswith(("http://", "https://")):
+            continue
+        title = html_lib.unescape(titles[idx]).strip() if idx < len(titles) else ""
+        page = html_lib.unescape(pages[idx]).strip() if idx < len(pages) else ""
+        items.append({"title": title, "thumb": url, "img": url, "link": page})
+    return items
+
+
 def _parse_headers(raw: str) -> dict:
     """把配置里的 JSON 头解析成 dict，解析失败就忽略。"""
     text = (raw or "").strip()
@@ -207,7 +240,7 @@ class ImageSearchPlugin(Star):
         ]
 
         source = str(raw.get("source") or "360").strip().lower()
-        if source not in ("360", "custom_json"):
+        if source not in ("360", "bing", "custom_json"):
             source = "360"
 
         image_fields = [
@@ -267,6 +300,22 @@ class ImageSearchPlugin(Star):
             if cfg["custom_referer"]:
                 headers.setdefault("Referer", cfg["custom_referer"])
             return url, headers
+
+        if cfg["source"] == "bing":
+            params = {
+                "q": variant,
+                "first": 1,
+                "count": max(count * 4, 12),
+                "mkt": "zh-CN",
+            }
+            url = BING_ENDPOINT + "?" + urllib.parse.urlencode(
+                params, quote_via=urllib.parse.quote
+            )
+            return url, {
+                "Referer": BING_REFERER,
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Language": "zh-CN,zh;q=0.9",
+            }
 
         # 内置 360
         params = {"q": variant, "pn": 0, "rn": max(count * 4, 12), "src": "srp"}
@@ -333,7 +382,7 @@ class ImageSearchPlugin(Star):
             if not isinstance(item, dict):
                 continue
 
-            if cfg["source"] == "360":
+            if cfg["source"] in ("360", "bing"):
                 title = (item.get("title") or "").strip()
                 image_url = self._pick_image_url_360(item, cfg["prefer_original"])
                 link = (item.get("link") or "").strip()
@@ -376,15 +425,22 @@ class ImageSearchPlugin(Star):
                 raise
 
             try:
-                data = await asyncio.to_thread(
-                    _fetch_json, url, cfg["request_timeout"], headers
-                )
+                if cfg["source"] == "bing":
+                    raw_text = await asyncio.to_thread(
+                        lambda: _http_get(url, cfg["request_timeout"], headers).decode(
+                            "utf-8", "replace"
+                        )
+                    )
+                    items = _parse_bing_items(raw_text)
+                else:
+                    data = await asyncio.to_thread(
+                        _fetch_json, url, cfg["request_timeout"], headers
+                    )
+                    items = self._extract_items(data, cfg)
             except Exception as exc:
                 last_error = f"{type(exc).__name__}: {exc}"
                 logger.warning("搜图请求失败 query=%r url=%s: %s", variant, url, exc)
                 continue
-
-            items = self._extract_items(data, cfg)
             results, skipped = self._collect(items, count, cfg, variant)
             total_skipped += skipped
             if results:
