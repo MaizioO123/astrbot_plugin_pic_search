@@ -3,9 +3,17 @@
     "description": "图源",
     "type": "string",
     "default": "360",
-    "options": ["360", "custom_json"],
-    "labels": ["360 图片（内置，无需 Key）", "自定义 JSON 接口"],
-    "hint": "默认用内置的 360 图片搜索，不需要任何 Key。选择「自定义 JSON 接口」后需要填写下面的接口地址与字段映射"
+    "options": [
+      "360",
+      "bing",
+      "custom_json"
+    ],
+    "labels": [
+      "360 图片（快，带标题，无需 Key）",
+      "Bing 图片（画质好，稍慢）",
+      "自定义 JSON 接口"
+    ],
+    "hint": "360 速度快（约 0.5 秒），Bing 画质更高但慢一些（约 3-4 秒）；两者都不需要 Key。自定义接口适合接带 Key 的图源或自建图床"
   },
   "default_count": {
     "description": "默认发送张数",
